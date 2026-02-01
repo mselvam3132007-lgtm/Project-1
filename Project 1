@@ -1,0 +1,170 @@
+[2/1, 7:33 PM] +91 81908 52839: <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SkillSprout MoodScape PRO</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>🌌 SkillSprout MoodScape PRO</h1>
+  <p>Emotion Intelligence Dashboard</p>
+  <button onclick="toggleTheme()">🌙 Toggle Theme</button>
+  <button onclick="exportPDF()">📄 Export Report</button>
+</header>
+
+<div class="card">
+  <h2>Select Your Mood</h2>
+  <select id="mood">
+    <option value="">Choose Mood</option>
+    <option value="happy">😊 Happy</option>
+    <option value="sad">😔 Sad</option>
+    <option value="focus">🎯 Focused</option>
+    <option value="stress">😤 Stressed</option>
+    <option value="excited">🤩 Excited</option>
+  </select>
+
+  <button onclick="logMood()">Log My Mood</button>
+
+  <div id="result">
+    <h3 id="message"></h3>
+    <p id="music"></p>
+    <p id="challenge"></p>
+  </div>
+</div>
+
+<div class="analytics">
+  <h2>📊 Mood Analytics</h2>
+  <ul id="history"></ul>
+  <p id="streak">🔥 Streak: 0 days</p>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
+[2/1, 7:34 PM] +91 81908 52839: style.css
+[2/1, 7:34 PM] +91 81908 52839: body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to right, #141e30, #243b55);
+  color: white;
+  text-align: center;
+  transition: 0.4s;
+}
+
+.dark {
+  background: linear-gradient(to right, #000428, #004e92);
+}
+
+header {
+  padding: 25px;
+  background: rgba(0,0,0,0.3);
+}
+
+button {
+  background: #243b55;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  margin: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.card, .analytics {
+  background: white;
+  color: black;
+  width: 320px;
+  margin: 30px auto;
+  padding: 20px;
+  border-radius: 15px;
+}
+
+.dark .card, .dark .analytics {
+  background: #1c1c1c;
+  color: white;
+}
+
+select {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+ul {
+  text-align: left;
+  max-height: 150px;
+  overflow-y: auto;
+}
+[2/1, 7:34 PM] +91 81908 52839: script.js
+[2/1, 7:34 PM] +91 81908 52839: let history = JSON.parse(localStorage.getItem("moods")) || [];
+let streak = localStorage.getItem("streak") || 0;
+let theme = localStorage.getItem("theme") || "light";
+
+if (theme === "dark") {
+  document.body.classList.add("dark");
+}
+
+document.getElementById("streak").innerText = "🔥 Streak: " + streak + " days";
+renderHistory();
+
+function logMood() {
+  const mood = document.getElementById("mood").value;
+  if (!mood) {
+    alert("Select a mood!");
+    return;
+  }
+
+  const date = new Date().toLocaleDateString();
+  history.push({ mood, date });
+  localStorage.setItem("moods", JSON.stringify(history));
+
+  updateStreak();
+  generateExperience(mood);
+  renderHistory();
+}
+
+function generateExperience(mood) {
+  const msg = document.getElementById("message");
+  const music = document.getElementById("music");
+  const challenge = document.getElementById("challenge");
+
+  const data = {
+    happy: ["You're glowing with positivity 🌞", "Upbeat playlist", "Compliment 3 people"],
+    sad: ["You're stronger than you know 💙", "Lo-fi or piano", "Write 3 gratitudes"],
+    focus: ["Deep work activated 🔥", "Coding beats", "25 min no-distraction session"],
+    stress: ["Breathe. Reset. Continue 🌿", "Nature sounds", "5 deep breaths"],
+    excited: ["Channel your energy 🚀", "Motivation mix", "Start a mini project"]
+  };
+
+  msg.innerText = data[mood][0];
+  music.innerText = "🎵 Music: " + data[mood][1];
+  challenge.innerText = "🎯 Challenge: " + data[mood][2];
+}
+
+function renderHistory() {
+  const list = document.getElementById("history");
+  list.innerHTML = "";
+  history.slice().reverse().forEach(item => {
+    const li = document.createElement("li");
+    li.innerText = `${item.date} — ${item.mood}`;
+    list.appendChild(li);
+  });
+}
+
+function updateStreak() {
+  streak++;
+  localStorage.setItem("streak", streak);
+  document.getElementById("streak").innerText = "🔥 Streak: " + streak + " days";
+}
+
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+  theme = document.body.classList.contains("dark") ? "dark" : "light";
+  localStorage.setItem("theme", theme);
+}
+
+function exportPDF() {
+  window.print();
+}
